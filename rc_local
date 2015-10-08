@@ -1,0 +1,36 @@
+# Fetch AWS values for this server
+#------------------------------------------------------------
+/usr/bin/curl --silent http://169.254.169.254/latest/meta-data/public-ipv4 > /etc/server_info/server_ip_external
+/usr/bin/curl --silent http://169.254.169.254/latest/meta-data/local-ipv4  > /etc/server_info/server_ip_internal
+/usr/bin/curl --silent http://169.254.169.254/latest/meta-data/instance-id > /etc/server_info/server_instance_id
+
+
+#------------------------------------------------------------
+# Create temporary Swap file on /mnt
+#------------------------------------------------------------
+
+#  Check if instance-store is mounted
+if grep -qs '/mnt' /proc/mounts;
+then
+        #  Check if previos swap file isn't present
+        if [ ! -f /mnt/swap ];
+        then
+                #  Create a "file-based" Swap on /mnt instance-store partition
+                dd if=/dev/zero of=/mnt/swap bs=2M count=4096
+                #  Clear memory kernel caches
+                echo 3 > /proc/sys/vm/drop_caches
+        else
+                echo "/mnt/swap already exists" | /usr/bin/logger -t swap_file
+        fi
+        #  Assign root-only access/rights
+        chown root.root /mnt/swap
+        chmod 600 /mnt/swap
+        #  Enable it as swap
+        /sbin/mkswap /mnt/swap 2>&1 | /usr/bin/logger -t swap_file
+        /sbin/swapon /mnt/swap 2>&1 | /usr/bin/logger -t swap_file
+else
+        echo "/mnt partition missing" | /usr/bin/logger -t swap_file
+fi
+
+exit 0
+
