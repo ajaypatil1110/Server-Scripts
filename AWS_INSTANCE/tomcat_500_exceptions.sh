@@ -26,7 +26,7 @@ do
         exc='Exception'
 
                 if [ -n "$pages" ]; then
-                        echo  "$name exception on $host ==>\n$pages" | mail -s "Code Orange $now : $name$exc " "ajaypatil1110@gmail.com"
+                        echo  "$name exception on $host ==>\n$pages" | mail -s "Code Orange $now : $name$exc " "abc@xyz.com"
                 else
                         echo "No error found"
                 fi
