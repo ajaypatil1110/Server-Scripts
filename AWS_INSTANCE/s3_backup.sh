@@ -9,8 +9,6 @@
 #  Backup to S3 key config files and folders
 #
 #-----------------------------------------------------------------------
-#  IF:2013-04-11 -- Created
-#-----------------------------------------------------------------------
 
 #  Determine if s3cmd is installed
 if ! which s3cmd > /dev/null;
